@@ -1,16 +1,16 @@
 module DataDescriptionLanguage where
-open import Data.Bool
+open import Cryptol
 open import Data.Char
 open import Data.String
 open import Data.Nat
 open import Data.Vec hiding (_++_)
 
 data U : Set where
-  BOOL CHAR NAT : U
+  BIT CHAR NAT : U
   VEC : U → ℕ → U
 
 el : U → Set
-el BOOL = Bool
+el BIT = Bit
 el CHAR = Char
 el NAT = ℕ
 el (VEC u n) = Vec (el u) n
@@ -21,8 +21,8 @@ parens : String → String
 parens s = "(" ++ s ++ ")"
 
 show : {u : U} → el u → String
-show {BOOL} true = "true"
-show {BOOL} false = "false"
+show {BIT} I = "I"
+show {BIT} O = "O"
 show {CHAR} c = charToString c
 show {NAT} zero = "zero"
 show {NAT} (suc n) = "suc " ++ parens (show n)
