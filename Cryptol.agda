@@ -44,4 +44,4 @@ SplitView-Universal {_} {n} {m} xs = view n m xs
 
 swab : Word 32 → Word 32
 swab xs with view 8 4 xs
-swab ._ | [ a ∷ b ∷ c ∷ d ∷ [] ] = concat (b ∷ a ∷ c ∷ d ∷ [])
+swab .(concat (a ∷ b ∷ c ∷ d ∷ [])) | [ a ∷ b ∷ c ∷ d ∷ [] ] = concat (b ∷ a ∷ c ∷ d ∷ [])

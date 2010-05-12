@@ -26,7 +26,7 @@ ShiftRView-Universal xs = view xs
 shiftR : {A : Set} → List A → List A
 shiftR xs with view xs
 shiftR ._ | [] = []
-shiftR ._ | shifted y ys = y ∷ ys
+shiftR .(ys ++ (y ∷ [])) | shifted y ys = y ∷ ys
 
 example₃ : shiftR (1 ∷ 2 ∷ 3 ∷ []) ≡ (3 ∷ 1 ∷ 2 ∷ [])
 example₃ = refl
