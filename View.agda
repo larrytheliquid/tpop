@@ -1,9 +1,10 @@
 module View where
 open import Data.Nat
 open import Data.List
+open import Relation.Unary
 open import Relation.Binary.PropositionalEquality
 
-data ShiftRView {A : Set} : List A → Set where
+data ShiftRView {A : Set} : Pred (List A) where
   [] : ShiftRView []
   shifted : (x : A) → (xs : List A) → ShiftRView (xs ++ [ x ])
 
@@ -18,6 +19,9 @@ view (x ∷ ._) | shifted y ys = shifted y (x ∷ ys)
 
 example₂ : ShiftRView (1 ∷ 2 ∷ 3 ∷ [])
 example₂ = view (1 ∷ 2 ∷ 3 ∷ [])
+
+ShiftRView-Universal : ∀ {a} → Universal (ShiftRView {a})
+ShiftRView-Universal xs = view xs
 
 shiftR : {A : Set} → List A → List A
 shiftR xs with view xs
