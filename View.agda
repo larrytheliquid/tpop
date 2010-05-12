@@ -20,7 +20,7 @@ view (x ∷ ._) | shifted y ys = shifted y (x ∷ ys)
 example₂ : ShiftRView (1 ∷ 2 ∷ 3 ∷ [])
 example₂ = view (1 ∷ 2 ∷ 3 ∷ [])
 
-ShiftRView-Universal : ∀ {a} → Universal (ShiftRView {a})
+ShiftRView-Universal : {A : Set} → Universal (ShiftRView {A})
 ShiftRView-Universal xs = view xs
 
 shiftR : {A : Set} → List A → List A
