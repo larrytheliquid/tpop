@@ -34,7 +34,7 @@ data SplitView {A : Set} : {n : ℕ} → (m : ℕ) → Vec A (m * n) → Set whe
 postulate
   splitConcatLemma : ∀ {A n} m → (xs : Vec A (m * n)) →
     concat (split n m xs) ≡ xs
-    
+
 view : {A : Set} (n m : ℕ) (xs : Vec A (m * n)) → SplitView m xs
 view n m xs with [ split n m xs ]
 ... | v rewrite splitConcatLemma m xs = v
