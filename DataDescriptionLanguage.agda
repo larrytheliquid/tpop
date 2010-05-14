@@ -42,6 +42,26 @@ f₁ >> f₂ = Skip f₁ f₂
 _>>=_ : (f : Format) → (⟦ f ⟧ → Format) → Format
 x >>= f = Read x f
 
+parse : (f : Format) → List Bit → Maybe (⟦ f ⟧ × List Bit)
+parse Bad _ = nothing
+parse End bs = just (tt , bs)
+parse (Base u) bs with read u
+... | nothing = nothing
+... | just v = just (v , bs)
+parse (Plus f₁ f₂) bs with parse f₁ bs
+... | just (x , cs) = just (inj₁ x , cs)
+... | nothing with parse f₂ bs
+... | just (y , ds) = just (inj₂ y , ds)
+... | nothing = nothing
+parse (Skip f₁ f₂) bs with parse f₁ bs
+... | nothing = nothing
+... | just (_ , cs) = parse f₂ cs
+parse (Read f₁ f₂) bs with parse f₁ bs
+... | nothing = nothing
+... | just (x , cs) with parse (f₂ x) cs
+... | nothing = nothing
+... | just (y , ds) = just ((x , y) , ds)
+
 pbm : Format
 pbm =
   char 'P' >>

@@ -3,6 +3,7 @@ open import Cryptol
 open import Data.Char
 open import Data.String
 open import Data.Nat
+open import Data.Maybe
 open import Data.Vec hiding (_++_)
 
 data U : Set where
@@ -28,3 +29,6 @@ show {NAT} zero = "zero"
 show {NAT} (suc n) = "suc " ++ parens (show n)
 show {VEC _ zero} [] = "[]"
 show {VEC _ (suc _)} (x ∷ xs) = show x ++ " ∷ " ++ parens (show xs)
+
+postulate
+  read : (u : U) → Maybe (el u)
