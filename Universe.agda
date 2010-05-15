@@ -4,6 +4,7 @@ open import Data.Char
 open import Data.String
 open import Data.Nat
 open import Data.Maybe
+open import Data.Product
 open import Data.Vec hiding (_++_)
 
 data U : Set where
@@ -31,4 +32,4 @@ show {VEC _ zero} [] = "[]"
 show {VEC _ (suc _)} (x ∷ xs) = show x ++ " ∷ " ++ parens (show xs)
 
 postulate
-  read : (u : U) → Maybe (el u)
+  read : (u : U) → String → Maybe (el u × String)

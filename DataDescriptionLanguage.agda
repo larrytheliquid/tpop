@@ -5,6 +5,7 @@ open import Data.Unit
 open import Data.Empty
 open import Data.Bool
 open import Data.Char
+open import Data.String hiding (_==_)
 open import Data.Maybe
 open import Data.List
 open import Data.Sum
@@ -42,25 +43,23 @@ f₁ >> f₂ = Skip f₁ f₂
 _>>=_ : (f : Format) → (⟦ f ⟧ → Format) → Format
 x >>= f = Read x f
 
-parse : (f : Format) → List Bit → Maybe (⟦ f ⟧ × List Bit)
+parse : (f : Format) → String → Maybe (⟦ f ⟧ × String)
 parse Bad _ = nothing
-parse End bs = just (tt , bs)
-parse (Base u) bs with read u
+parse End s = just (tt , s)
+parse (Base u) s = read u s
+parse (Plus f₁ f₂) s with parse f₁ s
+... | just (x , s') = just (inj₁ x , s')
+... | nothing with parse f₂ s
+... | just (y , s'') = just (inj₂ y , s'')
 ... | nothing = nothing
-... | just v = just (v , bs)
-parse (Plus f₁ f₂) bs with parse f₁ bs
-... | just (x , cs) = just (inj₁ x , cs)
-... | nothing with parse f₂ bs
-... | just (y , ds) = just (inj₂ y , ds)
+parse (Skip f₁ f₂) s with parse f₁ s
 ... | nothing = nothing
-parse (Skip f₁ f₂) bs with parse f₁ bs
+... | just (_ , s') = parse f₂ s'
+parse (Read f₁ f₂) s with parse f₁ s
 ... | nothing = nothing
-... | just (_ , cs) = parse f₂ cs
-parse (Read f₁ f₂) bs with parse f₁ bs
+... | just (x , s') with parse (f₂ x) s'
 ... | nothing = nothing
-... | just (x , cs) with parse (f₂ x) cs
-... | nothing = nothing
-... | just (y , ds) = just ((x , y) , ds)
+... | just (y , s'') = just ((x , y) , s'')
 
 pbm : Format
 pbm =
