@@ -5,6 +5,8 @@ open import Data.Unit
 open import Data.Empty
 open import Data.Bool
 open import Data.Char
+open import Data.Nat
+open import Data.Vec hiding (_>>=_)
 open import Data.String hiding (_==_)
 open import Data.Maybe
 open import Data.List
@@ -25,15 +27,6 @@ mutual
   ⟦ Plus f₁ f₂ ⟧ = ⟦ f₁ ⟧ ⊎ ⟦ f₂ ⟧
   ⟦ Skip _ f ⟧ = ⟦ f ⟧
   ⟦ Read f₁ f₂ ⟧ = Σ ⟦ f₁ ⟧ λ x → ⟦ f₂ x ⟧
-
-char : Char → Format
-char c = Read (Base CHAR)
-              (λ c′ → if c == c′ then End else Bad)
-
-satisfy : (f : Format) → (⟦ f ⟧ → Bool) → Format
-satisfy f pred = Read f right where
-  right : ⟦ f ⟧ → Format
-  right x = if pred x then End else Bad
 
 infixl 1 _>>=_ _>>_
 
@@ -61,6 +54,34 @@ parse (Read f₁ f₂) s with parse f₁ s
 ... | nothing = nothing
 ... | just (y , s'') = just ((x , y) , s'')
 
+data _≡_ {S : Set₁} (A : S) : S → Set₁ where
+    refl : A ≡ A
+
+char : Char → Format
+char c = Read (Base CHAR)
+              (λ c′ → if c == c′ then End else Bad)
+
+testChar : ⟦ char 'A' ⟧ ≡ 
+  Σ Char (λ x → ⟦ if 'A' == x then End else Bad ⟧)
+testChar = refl
+
+
+satisfy : (f : Format) → (⟦ f ⟧ → Bool) → Format
+satisfy f pred = Read f right where
+  right : ⟦ f ⟧ → Format
+  right x = if pred x then End else Bad
+
+vec : Format
+vec =
+  Base NAT >>= λ n →
+  Base (VEC BIT n)
+
+testVec : ⟦ vec ⟧ ≡ Σ ℕ (Vec Bit)
+testVec = refl
+
+exampleVec : ⟦ vec ⟧
+exampleVec = 2 , (I ∷ O ∷ [])
+
 pbm : Format
 pbm =
   char 'P' >>
@@ -72,3 +93,7 @@ pbm =
   char '\n' >>
   Base (VEC (VEC BIT w) h) >>= λ _ →
   End
+
+testPbm : ⟦ pbm ⟧ ≡ 
+  Σ ℕ (λ w → Σ ℕ (λ h → Σ (Vec (Vec Bit w) h) (λ _ → ⊤)))
+testPbm = refl
